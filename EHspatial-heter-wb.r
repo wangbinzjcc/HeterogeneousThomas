@@ -7,6 +7,8 @@ setwd('F:/DataW/lg-data/composition')
 dir()
 xm0a <- read.csv('lgdat2013.csv')
 xm0 <- subset(xm0a,sp=='蚬木' & is.na(bra)==T )
+# x11()
+# plot(xm0$x, xm0$y,xlab='',ylab='',col=4)
 if(any(xm0$dbh < 1)){xm0$dbh[xm0$dbh<1]=1}
 w00　<- duplicated(paste(xm0$x,xm0$y))
 xm0$x[w00] <- xm0$x[w00] + runif(sum(w00),0,0.1)
@@ -393,14 +395,14 @@ dev.off()
 
 ###################################################################################################################################################
 ####~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xm1 <- subset(xm0, dbh>0 )
+xm1 <- subset(xm0, dbh<20 )
 #
 xm2 <- ppp(x=xm1$x,y=xm1$y, window=win)
 xm3.0 <-envelope(xm2,pcf,nsim=11,nrank=5)
 xm3.1 <- as.data.frame(xm3.0)$obs
 data.sp2<- data.frame()
 xm.obs2 <- data.frame()
-for(i in 1:49){
+for(i in 1:30 ){
   sp1 = Inhom.Po(xm2,covr=covr,win=win,sig.t=sig.t)
   data.sp1 <- as.data.frame(sp1); data.sp1$marks <- i
   data.sp2 <-  rbind(data.sp2, data.sp1)
@@ -431,11 +433,15 @@ text(50,15,"dbh>0 cm")
 dev.off()
 ##########
 #
+names(covr)
 data.sp2<- data.frame()
 xm.obs2 <- data.frame()
-for(i in 1:49){
-  sp1=Inhom.Th(xm2,covr=covr,win=win,sig.t=sig.t,P=alpha)
+for(i in 1:30){
+  sp1=Inhom.Th(xm2,covr=covr[1:5],win=win,sig.t=sig.t,P=alpha)
   data.sp1 <- as.data.frame(sp1); data.sp1$marks <- i
+ #x11()
+ # plot(data.sp1$x, data.sp1$y, xlab='', ylab='')
+  
   data.sp2 <-  rbind(data.sp2, data.sp1)
   xm2.1 <- ppp(x=sp1$x,y=sp1$y, window=win)
   xm3 <-envelope(xm2.1,pcf,nsim=11,nrank=5)
